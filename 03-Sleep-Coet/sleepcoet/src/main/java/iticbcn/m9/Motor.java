@@ -1,43 +1,60 @@
 package iticbcn.m9;
+public class Motor extends Thread {
+    private int potenciaActual;
+    private int potenciaObjectiu;
+    private boolean encendido;
+    private final int id;
 
-public class Motor extends Thread{
-    int pActual;
-    int pObjectiu;
-    public Motor(String name){
-        super(name);
-        pActual = 0;
-        pObjectiu = 0;
+    public Motor(int id) {
+        this.id = id;
+        this.potenciaActual = 0;
+        this.potenciaObjectiu = 0;
+        this.encendido = true;
     }
-    public void setPotencia(int p){
-        this.pObjectiu = p;
+
+    public void setPotencia(int p) {
+        this.potenciaObjectiu = p;
     }
 
     @Override
-    public void run(){
-        try{
-            String incredecre;
-            while(true){
-                while(pActual!=pObjectiu){
-                    if(pObjectiu<pActual){
-                        incredecre = "Decre.";
-                        pActual--;
-                        System.out.printf("Motor %s: %s Objectiu: %d Actual: %d%n",getName(),incredecre,pObjectiu,pActual);
-                    } else {
-                        incredecre = "Incre.";
-                        pActual++;
-                        System.out.printf("Motor %s: %s Objectiu: %d Actual: %d%n",getName(),incredecre,pObjectiu,pActual);
+    public void run() {
+        while (encendido) {
+            if (potenciaActual != potenciaObjectiu) {
+                try {
+                    Thread.sleep((long) (Math.random() * 1000 + 1000)); //Pausa la ejecución de un hilo durante un tiempo aleatorio entre 1 y 2 segundos, simulando un retraso
+                    
+                    if (potenciaActual < potenciaObjectiu) {
+                        potenciaActual++;
+                        System.out.printf("Motor %d: Incre. Objectiu: %d Actual: %d%n", 
+                            id, potenciaObjectiu, potenciaActual);
+                    } else if (potenciaActual > potenciaObjectiu) {
+                        potenciaActual--;
+                        System.out.printf("Motor %d: Decre. Objectiu: %d Actual: %d%n", 
+                            id, potenciaObjectiu, potenciaActual);
                     }
-                    System.out.printf("Motor %s: FerRes Objectiu: %d Actual: %d%n",getName(),pObjectiu,pActual);
-                    sleep(2000);
-                }
-                sleep(100);
-                if(pActual==0){
-                    return;
+
+                    if (potenciaActual == potenciaObjectiu) {
+                        System.out.printf("Motor %d: FerRes Objectiu: %d Actual: %d%n", 
+                            id, potenciaObjectiu, potenciaActual);
+                        if (potenciaObjectiu == 0) {
+                            encendido = false;
+                        }
+                    }
+
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            
+            try {
+                Thread.sleep(50);  // Small delay to prevent CPU overuse
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
-    
+
+    public boolean isEncendido() {
+        return encendido;
+    }
 }
