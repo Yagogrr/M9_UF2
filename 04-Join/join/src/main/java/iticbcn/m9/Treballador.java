@@ -33,7 +33,7 @@ public class Treballador extends Thread {
     public void run(){
         for(int i = edat_inici_treball;i < edat_fi_treball+1;i++){
             this.edat_actual = i;
-            for(int j = 0;j<12;j++){
+            for(int j = 0;j!=12;j++){
                 this.cobra();
                 this.pagaImpostos();
             }
