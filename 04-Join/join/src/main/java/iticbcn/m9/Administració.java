@@ -15,8 +15,12 @@ public class Administració {
         Administració admin = new Administració();
         for(int i = 0;i<NUM_POBLACIÓ_ACTIVA;i++){
             admin.getTreballadors()[i].start();
+        }
+        for(int i = 0;i<NUM_POBLACIÓ_ACTIVA;i++){
             admin.getTreballadors()[i].join();
-
+        }
+        for(int i = 0;i<NUM_POBLACIÓ_ACTIVA;i++){
+            System.out.println(admin.getTreballadors()[i].toString());
         }
     }
 }

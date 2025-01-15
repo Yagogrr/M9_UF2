@@ -22,7 +22,7 @@ public class Treballador extends Thread {
     } 
 
     public void cobra() {
-        this.cobrat += NOU_ANUAL_BRUT / 12;
+        this.cobrat += (NOU_ANUAL_BRUT / 12);
     }
 
     public void pagaImpostos(){
@@ -43,7 +43,6 @@ public class Treballador extends Thread {
                 e.printStackTrace();
             }
         }
-        System.out.println(this.toString());
     }
 
     @Override
