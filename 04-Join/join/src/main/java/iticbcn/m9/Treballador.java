@@ -4,10 +4,10 @@ import java.util.Random;
 
 public class Treballador extends Thread {
 
-    private final int NOU_ANUAL_BRUT;
+    private final float NOU_ANUAL_BRUT;
     private int edat_inici_treball;
     private int edat_fi_treball;
-    private int edat_actual;
+    private float edat_actual;
     private float cobrat;
     private Random rnd;
 
@@ -31,14 +31,14 @@ public class Treballador extends Thread {
 
     @Override
     public void run(){
-        for(int i = edat_inici_treball;i < edat_fi_treball+1;i++){
+        for(int i = edat_inici_treball;i < edat_fi_treball;i++){
             this.edat_actual = i;
             for(int j = 0;j!=12;j++){
                 this.cobra();
                 this.pagaImpostos();
             }
             try {
-                Thread.sleep(rnd.nextInt(1000));
+                Thread.sleep(rnd.nextInt(100));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -55,7 +55,7 @@ public class Treballador extends Thread {
         return this.cobrat;
     }
 
-    public int getEdat(){
+    public float getEdat(){
         return this.edat_actual;
     }
    
