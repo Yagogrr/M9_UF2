@@ -21,15 +21,17 @@ public class Soci extends Thread {
     public void run() {
         for (int any = 0; any < maxAnys; any++) {
             for (int mes = 0; mes < 12; mes++) {
-                /*
-                 * Los meses pares se hace un ingreso a la cuenta
-                 * Los meses impares se hace un retiro de la cuenta
-                 */
-                float saldoActual = compte.getSaldo();
-                if (mes % 2 == 0) {
-                    compte.setSaldo(saldoActual + aportacio);
-                } else {
-                    compte.setSaldo(saldoActual - aportacio);
+                /* Ahora sincronizado
+                * Los meses pares se hace un ingreso a la cuenta
+                * Los meses impares se hace un retiro de la cuenta
+                */
+                synchronized (compte) {
+                    float saldoActual = compte.getSaldo();
+                    if (mes % 2 == 0) {
+                        compte.setSaldo(saldoActual + aportacio);
+                    } else {
+                        compte.setSaldo(saldoActual - aportacio);
+                    }
                 }
                 try {
                     Thread.sleep(random.nextInt(esperaMax));
