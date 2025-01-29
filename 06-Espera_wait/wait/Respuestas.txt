@@ -1,0 +1,5 @@
+Porque se acaba la ejecución despues de un rato ejecutandose?
+Al llegar a 0 plazas disponibles, se quedan esperando a que hayan mas plazas disponibles. Peró como
+nunca llegara el caso. Ya termina la ejecución
+
+
