@@ -24,7 +24,7 @@ public class Assistent extends Thread {
             try {
                 Thread.sleep(random.nextInt(1000));
                 
-                if (random.nextBoolean()) {
+                if (random.nextInt(100)<=70) {
                     esdeveniment.ferReserva(this);
                 } else {
                     esdeveniment.cancelaReserva(this);
