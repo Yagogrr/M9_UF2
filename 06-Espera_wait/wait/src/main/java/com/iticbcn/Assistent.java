@@ -2,36 +2,36 @@ package com.iticbcn;
 
 import java.util.Random;
 
-public class Assistent extends Thread{
-    private Esdeveniment esdeveniment;
-    public Assistent(String nom, Esdeveniment esdeveniment){
-        super(nom);
+
+public class Assistent extends Thread {
+    private final String nom;
+    private final Esdeveniment esdeveniment;
+    private final Random random;
+
+    public Assistent(String nom, Esdeveniment esdeveniment) {
+        this.nom = nom;
         this.esdeveniment = esdeveniment;
+        this.random = new Random();
+    }
+
+    public String getNom() {
+        return nom;
     }
 
     @Override
-    public void run(){
-        while(true){
-            Random r = new Random();
-            if(r.nextInt(1000) % 2 == 0){
-                this.esdeveniment.ferReserva(this);
-            } else {
-                this. esdeveniment.cancelarReserva(this);
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(random.nextInt(1000));
+                
+                if (random.nextBoolean()) {
+                    esdeveniment.ferReserva(this);
+                } else {
+                    esdeveniment.cancelaReserva(this);
+                }
+            } catch (InterruptedException e) {
+                break;
             }
-            try{
-                this.sleep(r.nextInt(1000));
-            } catch(InterruptedException e){
-                e.printStackTrace();
-            }
-        }   
+        }
     }
-
-    public Esdeveniment getEsdeveniment() {
-        return esdeveniment;
-    }
-    public void setEsdeveniment(Esdeveniment esdeveniment) {
-        this.esdeveniment = esdeveniment;
-    }
-
-    
 }
