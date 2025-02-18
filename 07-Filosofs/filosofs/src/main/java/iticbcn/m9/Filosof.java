@@ -67,12 +67,14 @@ public class Filosof extends Thread{
                 Random r = new Random();
                 int sleepTime = 500 + r.nextInt(501);
                 sleep(sleepTime);
+                
                 if(!this.forquillaEsquerra.getEnUs()){
                     this.forquillaEsquerra.setEnUs(true);
                     System.out.println("Filòsof: "+ getName() + " agafa la forquilla esquerra "+this.forquillaEsquerra.getNumeroF());
+                    
                     if(!this.forquillaDreta.getEnUs()){
                         this.forquillaDreta.setEnUs(true);
-                        System.out.println("Filòsof: "+ getName() + " agafa la forquilla dreta "+this.forquillaEsquerra.getNumeroF());
+                        System.out.println("Filòsof: "+ getName() + " agafa la forquilla dreta "+this.forquillaDreta.getNumeroF());  // Fixed: was using forquillaEsquerra instead of forquillaDreta
                         System.out.println("Filòsof: "+ getName() + " menja");
                         this.menjar();
                         System.out.println("Filòsof: "+ getName() + " ha acabat de menjar");
@@ -80,22 +82,19 @@ public class Filosof extends Thread{
                         this.forquillaDreta.setEnUs(false);
                         this.forquillaEsquerra.setEnUs(false);
                     } else{
+                        this.forquillaEsquerra.setEnUs(false); 
                         System.out.println("Filòsof: "+ getName() + " deixa la forquilla esquerra("+this.forquillaEsquerra.getNumeroF()+") i espera(dreta ocupada)");
                         this.gana++;
-                        System.out.println("Gana: "+this.gana);
-                        continue;
+                        System.out.println("Filòsof: "+ getName() + " - Gana: "+this.gana); 
                     }
                 } else{
                     this.gana++;
-                    System.out.println("Gana: "+this.gana);
-                    continue;
+                    System.out.println("Filòsof: "+ getName() + " - Gana: "+this.gana); 
                 }
-                
             }
         } catch (Exception e) {
-            // TODO: handle exception
+            System.err.println("Error en filosofo " + getName() + ": " + e.getMessage());
         }
-
     }
     
 }
