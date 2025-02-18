@@ -26,7 +26,7 @@ public class Filosof extends Thread{
     }
 
     public void pensar(){
-        System.out.println("Filòsof: "+ getName() + " pensa");
+        System.out.println("Filòsof: "+ getName() + " pensant");
         Random r = new Random();
         int sleepTime = 1000 + r.nextInt(1001);
         try {
