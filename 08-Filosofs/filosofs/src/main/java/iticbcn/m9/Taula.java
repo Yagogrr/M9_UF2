@@ -11,7 +11,7 @@ public class Taula {
         // Iniciar filósofos
         for (int i = 0; i < nombreFilosofs; i++) {
             String nombre = "fil" + i;
-            this.filosofs[i] = new Filosof(nombre, null, null);
+            this.filosofs[i] = new Filosof(nombre, null, null,i);
         }
     
         // Iniciar forquilles
