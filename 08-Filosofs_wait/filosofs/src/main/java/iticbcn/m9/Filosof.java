@@ -16,25 +16,21 @@ public class Filosof extends Thread{
         this.nComensal = nComensal;
     }
 
-    public void menjar(){
+    public synchronized void menjar(){
         this.setGana(0);
-        Random r = new Random();
-        int sleepTime = 1000 + r.nextInt(1001);
         try {
-            sleep(sleepTime);
-        } catch (Exception e) {
-            // TODO: handle exception
+            wait(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
-    public void pensar(){
+    public synchronized void pensar(){
         System.out.println("Filòsof: "+ getName() + " pensant");
-        Random r = new Random();
-        int sleepTime = 1000 + r.nextInt(1001);
         try {
-            sleep(sleepTime);
-        } catch (Exception e) {
-            // TODO: handle exception
+            wait(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -71,8 +67,8 @@ public class Filosof extends Thread{
     }
 
     public boolean agafaForquillaEsquerra() {
-        if (!this.forquillaEsquerra.getEnUs()) {
-            this.forquillaEsquerra.setEnUs(true);
+        if (this.forquillaEsquerra.getLLIURE()==this.forquillaDreta.getPropietari()) {
+            this.forquillaEsquerra.setPropietari(this.nComensal);
             System.out.println("Filòsof: "+ getName() + " agafa la forquilla esquerra "+this.forquillaEsquerra.getNumeroF());
             return true;
         }
@@ -80,8 +76,8 @@ public class Filosof extends Thread{
     }
 
     public boolean agafaForquillaDreta() {
-        if (!this.forquillaDreta.getEnUs()) {
-            this.forquillaDreta.setEnUs(true);
+        if (this.forquillaDreta.getLLIURE()==this.forquillaDreta.getPropietari()) {
+            this.forquillaDreta.setPropietari(this.nComensal);
             System.out.println("Filòsof: "+ getName() + " agafa la forquilla dreta "+this.forquillaDreta.getNumeroF());
             return true;
         }
@@ -89,8 +85,8 @@ public class Filosof extends Thread{
     }
 
     public void deixarForquilles() {
-        this.forquillaDreta.setEnUs(false);
-        this.forquillaEsquerra.setEnUs(false);
+        this.forquillaDreta.setPropietari(this.forquillaDreta.getLLIURE());
+        this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
     }
 
     public void agafarForquilles() {
@@ -102,7 +98,7 @@ public class Filosof extends Thread{
                 this.pensar();
                 deixarForquilles();
             } else {
-                this.forquillaEsquerra.setEnUs(false);
+                this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
                 System.out.println("Filòsof: "+ getName() + " deixa la forquilla esquerra("+this.forquillaEsquerra.getNumeroF()+") i espera(dreta ocupada)");
                 this.gana++;
                 System.out.println("Filòsof: "+ getName() + " - Gana: "+this.gana);
@@ -114,15 +110,15 @@ public class Filosof extends Thread{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
             while (true) {
-                Random r = new Random();
-                int sleepTime = 500 + r.nextInt(501);
-                sleep(sleepTime);
+                wait(1000);
                 agafarForquilles();
+                notifyAll(); //avisa a los filosofos de que las cucharas estan disponibles
             }
-        } catch (Exception e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             System.err.println("Error en filosofo " + getName() + ": " + e.getMessage());
         }
     }
