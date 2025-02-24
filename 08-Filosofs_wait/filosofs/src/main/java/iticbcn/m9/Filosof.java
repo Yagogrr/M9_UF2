@@ -16,21 +16,35 @@ public class Filosof extends Thread{
         this.nComensal = nComensal;
     }
 
-    public synchronized void menjar(){
-        this.setGana(0);
-        try {
-            wait(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+    public void menjar() {
+        while (true) {
+            try {
+                if(agafarForquilles()) {
+                    System.out.println("Filòsof: "+this.getName()+" menja");
+                    this.gana = 0;
+                    Thread.sleep(new Random().nextInt(1000)+1000);
+                    System.out.println("Filòsof: "+this.getName()+" ha acabat de menjar");
+                    this.pensar();
+                    deixarForquilles();
+                    notifyAll();
+                } else{
+                    this.gana++;
+                    System.out.println("Filòsof: "+this.getName()+" gana = "+this.gana);
+                    Thread.sleep(new Random().nextInt(501)+500);
+                    wait();
+                }
+            } catch (InterruptedException e) {
+                System.err.println(e );
+            }
         }
     }
 
-    public synchronized void pensar(){
-        System.out.println("Filòsof: "+ getName() + " pensant");
+    public void pensar() {
         try {
-            wait(2000);
+            System.out.println("Filòsof: "+ getName() + " pensant");
+            Thread.sleep(new Random().nextInt(1000)+1000);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            System.err.println(e );
         }
     }
 
@@ -67,7 +81,7 @@ public class Filosof extends Thread{
     }
 
     public boolean agafaForquillaEsquerra() {
-        if (this.forquillaEsquerra.getLLIURE()==this.forquillaDreta.getPropietari()) {
+        if (this.forquillaEsquerra.getLLIURE()==this.forquillaEsquerra.getPropietari()) {
             this.forquillaEsquerra.setPropietari(this.nComensal);
             System.out.println("Filòsof: "+ getName() + " agafa la forquilla esquerra "+this.forquillaEsquerra.getNumeroF());
             return true;
@@ -84,42 +98,33 @@ public class Filosof extends Thread{
         return false;
     }
 
-    public void deixarForquilles() {
+    private void deixarForquilles() {
         this.forquillaDreta.setPropietari(this.forquillaDreta.getLLIURE());
         this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
+        notifyAll();
     }
 
-    public void agafarForquilles() {
+    public boolean agafarForquilles() {
         if (agafaForquillaEsquerra()) {
             if (agafaForquillaDreta()) {
-                System.out.println("Filòsof: "+ getName() + " menja");
-                this.menjar();
-                System.out.println("Filòsof: "+ getName() + " ha acabat de menjar");
-                this.pensar();
-                deixarForquilles();
+                return true;
             } else {
                 this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
                 System.out.println("Filòsof: "+ getName() + " deixa la forquilla esquerra("+this.forquillaEsquerra.getNumeroF()+") i espera(dreta ocupada)");
-                this.gana++;
-                System.out.println("Filòsof: "+ getName() + " - Gana: "+this.gana);
             }
-        } else {
-            this.gana++;
-            System.out.println("Filòsof: "+ getName() + " - Gana: "+this.gana);
         }
+        return false;
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         try {
             while (true) {
-                wait(1000);
-                agafarForquilles();
-                notifyAll(); //avisa a los filosofos de que las cucharas estan disponibles
+                this.menjar();
+                this.pensar();
             }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("Error en filosofo " + getName() + ": " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
     
