@@ -18,23 +18,25 @@ public class Filosof extends Thread{
 
     public void menjar() {
         while (true) {
-            try {
-                if(agafarForquilles()) {
-                    System.out.println("Filòsof: "+this.getName()+" menja");
-                    this.gana = 0;
-                    Thread.sleep(new Random().nextInt(1000)+1000);
-                    System.out.println("Filòsof: "+this.getName()+" ha acabat de menjar");
-                    this.pensar();
-                    deixarForquilles();
-                    notifyAll();
-                } else{
-                    this.gana++;
-                    System.out.println("Filòsof: "+this.getName()+" gana = "+this.gana);
-                    Thread.sleep(new Random().nextInt(501)+500);
-                    wait();
+            synchronized(this) {
+                try {
+                    if(agafarForquilles()) {
+                        System.out.println("Filòsof: "+this.getName()+" menja");
+                        this.gana = 0;
+                        Thread.sleep(new Random().nextInt(1000)+1000);
+                        System.out.println("Filòsof: "+this.getName()+" ha acabat de menjar");
+                        this.pensar();
+                        deixarForquilles();
+                        notifyAll();
+                    } else{
+                        this.gana++;
+                        System.out.println("Filòsof: "+this.getName()+" gana = "+this.gana);
+                        Thread.sleep(new Random().nextInt(501)+500);
+                        wait();
+                    }
+                } catch (InterruptedException e) {
+                    System.err.println(e );
                 }
-            } catch (InterruptedException e) {
-                System.err.println(e );
             }
         }
     }
@@ -98,7 +100,7 @@ public class Filosof extends Thread{
         return false;
     }
 
-    private void deixarForquilles() {
+    private synchronized void deixarForquilles() {
         this.forquillaDreta.setPropietari(this.forquillaDreta.getLLIURE());
         this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
         notifyAll();
@@ -128,5 +130,5 @@ public class Filosof extends Thread{
         }
     }
     
-}  
+}
  
