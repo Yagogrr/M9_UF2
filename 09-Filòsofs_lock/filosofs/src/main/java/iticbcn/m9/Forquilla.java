@@ -1,19 +1,15 @@
 package iticbcn.m9;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Forquilla {
     private int numeroF;
-    private final int LLIURE=-1;
-
-    private int propietari;
+    private ReentrantLock bloqueig = new ReentrantLock();
 
     public Forquilla(int id){
         this.numeroF = id;
-        this.propietari = LLIURE;
     }
 
-    public int getLLIURE() {
-        return LLIURE;
-    }
     
     public int getNumeroF() {
         return numeroF;
@@ -23,12 +19,16 @@ public class Forquilla {
         this.numeroF = id;
     }
 
-    public int getPropietari() {
-        return propietari;
+    public ReentrantLock getBloqueig() {
+        return bloqueig;
+    } 
+
+    public void agafar (){
+        bloqueig.lock();
     }
 
-    public void setPropietari(int propietari) {
-        this.propietari = propietari;
+    public void deixar (){
+        bloqueig.unlock();
     }
     
 }
