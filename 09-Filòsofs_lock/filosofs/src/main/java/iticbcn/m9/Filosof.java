@@ -17,8 +17,8 @@ public class Filosof extends Thread {
         this.forquillaDreta = forquillaDreta;
         this.forquillaEsquerra = forquillaEsquerra;
         this.nComensal = nComensal;
-        this.iniciGana = 0;
-        this.fiGana = 0;
+        this.iniciGana = System.currentTimeMillis();
+        this.fiGana = System.currentTimeMillis();
         this.Gana = 0;
     }
 
