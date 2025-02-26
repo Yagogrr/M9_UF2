@@ -1,52 +1,58 @@
 package iticbcn.m9;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-public class Filosof extends Thread{
+public class Filosof extends Thread {
     private Forquilla forquillaDreta;
     private Forquilla forquillaEsquerra;
-    private int gana;
+    private long Gana;
     private int nComensal;
+    private long iniciGana;
+    private long fiGana;
 
-    public Filosof(String nom,Forquilla forquillaDreta,Forquilla forquillaEsquerra, int nComensal){
+    public Filosof(String nom, Forquilla forquillaDreta, Forquilla forquillaEsquerra, int nComensal) {
         super(nom);
-        this.gana = 0;
+        this.Gana = 0;
         this.forquillaDreta = forquillaDreta;
         this.forquillaEsquerra = forquillaEsquerra;
         this.nComensal = nComensal;
+        this.iniciGana = 0;
+        this.fiGana = 0;
+        this.Gana = 0;
+    }
+
+    public void calcularGana() {
+        this.Gana = (this.fiGana - this.iniciGana) / 1000;
+    }
+
+    public void resetGana() {
+        this.iniciGana = 0;
     }
 
     public void menjar() {
-        while (true) {
-            synchronized(this) {
-                try {
-                    if(agafarForquilles()) {
-                        System.out.println("Filòsof: "+this.getName()+" menja");
-                        this.gana = 0;
-                        Thread.sleep(new Random().nextInt(1000)+1000);
-                        System.out.println("Filòsof: "+this.getName()+" ha acabat de menjar");
-                        this.pensar();
-                        deixarForquilles();
-                        notifyAll();
-                    } else{
-                        this.gana++;
-                        System.out.println("Filòsof: "+this.getName()+" gana = "+this.gana);
-                        Thread.sleep(new Random().nextInt(501)+500);
-                        wait();
-                    }
-                } catch (InterruptedException e) {
-                    System.err.println(e );
-                }
+            try {
+                agafarForquilles();
+                this.fiGana = System.currentTimeMillis();
+                calcularGana();
+                System.out.println("Filòsof: " + this.getName() + " menja amb " + this.Gana + " gana");
+                Thread.sleep(new Random().nextInt(1000) + 1000);
+                resetGana();
+                System.out.println("Filòsof: " + this.getName() + " ha acabat de menjar");
+                deixarForquilles();
+                this.pensar();
+            } catch (InterruptedException e) {
+                System.err.println(e);
             }
-        }
     }
 
     public void pensar() {
         try {
-            System.out.println("Filòsof: "+ getName() + " pensant");
-            Thread.sleep(new Random().nextInt(1000)+1000);
+            this.iniciGana = System.currentTimeMillis();
+            System.out.println("Filòsof: " + getName() + " pensant");
+            Thread.sleep(new Random().nextInt(1000) + 1000);
         } catch (InterruptedException e) {
-            System.err.println(e );
+            System.err.println(e);
         }
     }
 
@@ -74,53 +80,50 @@ public class Filosof extends Thread{
         this.forquillaEsquerra = forquillaEsquerra;
     }
 
-    public int getGana() {
-        return gana;
+    public long getGana() {
+        return Gana;
     }
 
     public void setGana(int gana) {
-        this.gana = gana;
+        this.Gana = gana;
     }
 
-    public boolean agafaForquillaEsquerra() {
-        if (this.forquillaEsquerra.getLLIURE()==this.forquillaEsquerra.getPropietari()) {
-            this.forquillaEsquerra.setPropietari(this.nComensal);
-            System.out.println("Filòsof: "+ getName() + " agafa la forquilla esquerra "+this.forquillaEsquerra.getNumeroF());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean agafaForquillaDreta() {
-        if (this.forquillaDreta.getLLIURE()==this.forquillaDreta.getPropietari()) {
-            this.forquillaDreta.setPropietari(this.nComensal);
-            System.out.println("Filòsof: "+ getName() + " agafa la forquilla dreta "+this.forquillaDreta.getNumeroF());
-            return true;
-        }
-        return false;
-    }
-
-    private synchronized void deixarForquilles() {
-        this.forquillaDreta.setPropietari(this.forquillaDreta.getLLIURE());
-        this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
-        notifyAll();
-    }
-
-    public boolean agafarForquilles() {
-        if (agafaForquillaEsquerra()) {
-            if (agafaForquillaDreta()) {
-                return true;
-            } else {
-                this.forquillaEsquerra.setPropietari(this.forquillaDreta.getLLIURE());
-                System.out.println("Filòsof: "+ getName() + " deixa la forquilla esquerra("+this.forquillaEsquerra.getNumeroF()+") i espera(dreta ocupada)");
+    public void agafaForquillaEsquerra() {
+        while (!this.forquillaEsquerra.tryAgafar()) {
+            try {
+                Thread.sleep(new Random().nextInt(500) + 500);
+            } catch (InterruptedException e) {
+                System.err.println(e);
             }
         }
-        return false;
+        System.out.println("Filòsof: " + getName() + " agafa la forquilla esquerra " + this.forquillaEsquerra.getNumeroF());
+    }
+
+    public void agafaForquillaDreta() {
+        while (!this.forquillaDreta.tryAgafar()) {
+            try {
+                Thread.sleep(new Random().nextInt(500) + 500);
+            } catch (InterruptedException e) {
+                System.err.println(e);
+            }
+        }
+        System.out.println("Filòsof: " + getName() + " agafa la forquilla dreta " + this.forquillaDreta.getNumeroF());
+    }
+
+    private void deixarForquilles() {
+        this.forquillaDreta.deixar();
+        this.forquillaEsquerra.deixar();
+    }
+
+    public void agafarForquilles() {
+        agafaForquillaEsquerra();
+        agafaForquillaDreta();
     }
 
     @Override
     public void run() {
         try {
+        
             while (true) {
                 this.menjar();
                 this.pensar();
@@ -129,6 +132,5 @@ public class Filosof extends Thread{
             System.out.println(e);
         }
     }
-    
+
 }
- 
