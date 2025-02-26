@@ -15,10 +15,6 @@ public class Forquilla {
         return numeroF;
     }
 
-    public boolean estaOcupada(){
-        return bloqueig.isLocked();
-    }
-
     public void setNumeroF(int id) {
         this.numeroF = id;
     }
@@ -34,7 +30,7 @@ public class Forquilla {
     }
 
     public void deixar (){
-        if(estaOcupada()){
+        if(bloqueig.isHeldByCurrentThread()){
             bloqueig.unlock();
         }
     }

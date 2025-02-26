@@ -123,7 +123,6 @@ public class Filosof extends Thread {
     @Override
     public void run() {
         try {
-        
             while (true) {
                 this.menjar();
                 this.pensar();
