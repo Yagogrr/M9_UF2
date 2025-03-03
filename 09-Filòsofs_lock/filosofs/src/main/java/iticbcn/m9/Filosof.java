@@ -1,135 +1,162 @@
 package iticbcn.m9;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class Filosof extends Thread {
-    private Forquilla forquillaDreta;
-    private Forquilla forquillaEsquerra;
-    private long Gana;
-    private int nComensal;
-    private long iniciGana;
-    private long fiGana;
+    private long inicioHambre;
+    private long finHambre;
+    private long hambre;
+    private Forquilla tenedorDerecho;
+    private Forquilla tenedorIzquierdo;
+    private int numComensal;
 
-    public Filosof(String nom, Forquilla forquillaDreta, Forquilla forquillaEsquerra, int nComensal) {
+    public int getNumComensal() {
+        return numComensal;
+    }
+
+    public void setNumComensal(int numComensal) {
+        this.numComensal = numComensal;
+    }
+
+    public long getHambre() {
+        return hambre;
+    }
+
+    public void setHambre(int hambre) {
+        this.hambre = hambre;
+    }
+
+    public long getInicioHambre() {
+        return inicioHambre;
+    }
+
+    public void setInicioHambre(long inicioHambre) {
+        this.inicioHambre = inicioHambre;
+    }
+
+    public long getFinHambre() {
+        return finHambre;
+    }
+
+    public void setFinHambre(long finHambre) {
+        this.finHambre = finHambre;
+    }
+
+    public Forquilla getTenedorDerecho() {
+        return tenedorDerecho;
+    }
+
+    public void setTenedorDerecho(Forquilla tenedorDerecho) {
+        this.tenedorDerecho = tenedorDerecho;
+    }
+
+    public Forquilla getTenedorIzquierdo() {
+        return tenedorIzquierdo;
+    }
+
+    public void setTenedorIzquierdo(Forquilla tenedorIzquierdo) {
+        this.tenedorIzquierdo = tenedorIzquierdo;
+    }
+
+    public Forquilla gettenedorDerecho() {
+        return tenedorDerecho;
+    }
+
+    public void settenedorDerecho(Forquilla tenedorDerecho) {
+        this.tenedorDerecho = tenedorDerecho;
+    }
+
+    public Forquilla gettenedorIzquierdo() {
+        return tenedorIzquierdo;
+    }
+
+    public void settenedorIzquierdo(Forquilla tenedorIzquierdo) {
+        this.tenedorIzquierdo = tenedorIzquierdo;
+    }
+
+    public Filosof(String nom) {
         super(nom);
-        this.Gana = 0;
-        this.forquillaDreta = forquillaDreta;
-        this.forquillaEsquerra = forquillaEsquerra;
-        this.nComensal = nComensal;
-        this.iniciGana = System.currentTimeMillis();
-        this.fiGana = System.currentTimeMillis();
-        this.Gana = 0;
+        inicioHambre = System.currentTimeMillis();
+        finHambre = System.currentTimeMillis();
     }
 
-    public void calcularGana() {
-        this.Gana = (this.fiGana - this.iniciGana) / 1000;
-    }
-
-    public void resetGana() {
-        this.iniciGana = 0;
-    }
-
-    public void menjar() {
-            try {
-                agafarForquilles();
-                this.fiGana = System.currentTimeMillis();
-                calcularGana();
-                System.out.println("Filòsof: " + this.getName() + " menja amb " + this.Gana + " gana");
-                Thread.sleep(new Random().nextInt(1000) + 1000);
-                resetGana();
-                System.out.println("Filòsof: " + this.getName() + " ha acabat de menjar");
-                deixarForquilles();
-                this.pensar();
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-    }
-
-    public void pensar() {
+    public void menjar() throws InterruptedException, Exception {
+        agafarForquilles();
+        finHambre = System.currentTimeMillis();
+        calcularGana();
+        System.out.println("Filòsof: " + this.getName() + " menja amb gana " + this.hambre);
         try {
-            this.iniciGana = System.currentTimeMillis();
-            System.out.println("Filòsof: " + getName() + " pensant");
             Thread.sleep(new Random().nextInt(1000) + 1000);
         } catch (InterruptedException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
+        System.out.println("Filòsof: " + this.getName() + " ha acabat de menjar");
+        deixarForquilles();
     }
 
-    public Forquilla getForquillaDreta() {
-        return forquillaDreta;
-    }
-
-    public void setForquillaDreta(Forquilla forquillaDreta) {
-        this.forquillaDreta = forquillaDreta;
-    }
-
-    public Forquilla getForquillaEsquerra() {
-        return forquillaEsquerra;
-    }
-
-    public int getnComensal() {
-        return nComensal;
-    }
-
-    public void setnComensal(int nComensal) {
-        this.nComensal = nComensal;
-    }
-
-    public void setForquillaEsquerra(Forquilla forquillaEsquerra) {
-        this.forquillaEsquerra = forquillaEsquerra;
-    }
-
-    public long getGana() {
-        return Gana;
-    }
-
-    public void setGana(int gana) {
-        this.Gana = gana;
-    }
-
-    public void agafaForquillaEsquerra() {
-        while (!this.forquillaEsquerra.tryAgafar()) {
-            try {
-                Thread.sleep(new Random().nextInt(500) + 500);
-            } catch (InterruptedException e) {
-                System.err.println(e);
+    private void agafarForquilles() throws InterruptedException, Exception {
+        boolean tieneIzquierda = false;
+        
+        while (true) {
+            if (!tieneIzquierda) {
+                tieneIzquierda = agafatenedorIzquierdo();
+                if (tieneIzquierda) {
+                    System.out.println("Filòsof: " + this.getName() + " agafa la forquilla esquerra " + this.tenedorIzquierdo.getNumeroF());
+                }
+            }
+            if (tieneIzquierda) {
+                boolean tieneDerecha = agafatenedorDerecho();
+                if (tieneDerecha) {
+                    System.out.println("Filòsof: " + this.getName() + " agafa la forquilla dreta " + this.tenedorDerecho.getNumeroF());
+                    return;
+                } else {
+                    this.tenedorIzquierdo.deixar();
+                    tieneIzquierda = false;
+                    System.out.println("Filòsof: " + this.getName() + " deixa l'esquerra (" + this.tenedorIzquierdo.getNumeroF() + ") i espera (dreta ocupada)");
+                    Thread.sleep(new Random().nextInt(501) + 500);
+                }
             }
         }
-        System.out.println("Filòsof: " + getName() + " agafa la forquilla esquerra " + this.forquillaEsquerra.getNumeroF());
     }
 
-    public void agafaForquillaDreta() {
-        while (!this.forquillaDreta.tryAgafar()) {
-            try {
-                Thread.sleep(new Random().nextInt(500) + 500);
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-        }
-        System.out.println("Filòsof: " + getName() + " agafa la forquilla dreta " + this.forquillaDreta.getNumeroF());
+    private boolean agafatenedorIzquierdo() throws Exception {
+        return this.tenedorIzquierdo.agafar();
+    }
+
+    private boolean agafatenedorDerecho() throws Exception {
+        return this.tenedorDerecho.agafar();
     }
 
     private void deixarForquilles() {
-        this.forquillaDreta.deixar();
-        this.forquillaEsquerra.deixar();
+        this.tenedorDerecho.deixar();
+        this.tenedorIzquierdo.deixar();
+    }
+    
+    private void calcularGana() {
+        hambre = ((finHambre - inicioHambre) / 1000);
     }
 
-    public void agafarForquilles() {
-        agafaForquillaEsquerra();
-        agafaForquillaDreta();
+    public void pensar() {
+        inicioHambre = System.currentTimeMillis();
+        System.out.println("Filòsof: " + this.getName() + " pensant");
+        Random rand = new Random();
+        int tiempo = rand.nextInt(1000) + 1000;
+        try {
+            Thread.sleep(tiempo);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
-        try {
-            while (true) {
+        while (true) {
+            try {
                 this.menjar();
                 this.pensar();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            System.out.println(e);
         }
     }
-
 }

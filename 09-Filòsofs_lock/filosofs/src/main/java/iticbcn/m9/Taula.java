@@ -11,7 +11,7 @@ public class Taula {
         // Iniciar filósofos
         for (int i = 0; i < nombreFilosofs; i++) {
             String nombre = "fil" + i;
-            this.filosofs[i] = new Filosof(nombre, null, null,i);
+            this.filosofs[i] = new Filosof(nombre);
         }
     
         // Iniciar forquilles
@@ -21,8 +21,8 @@ public class Taula {
     
         // Asignar las forquilles a los filósofos
         for (int i = 0; i < nombreFilosofs; i++) {
-            this.filosofs[i].setForquillaEsquerra(this.forquilles[i]);
-            this.filosofs[i].setForquillaDreta(this.forquilles[(i + 1) % nombreFilosofs]);
+            this.filosofs[i].settenedorIzquierdo(this.forquilles[i]);
+            this.filosofs[i].settenedorDerecho(this.forquilles[(i + 1) % nombreFilosofs]);
         }
     }
     
@@ -63,8 +63,8 @@ public class Taula {
     public String toString() {
         StringBuilder taula = new StringBuilder("\n");
         for (int i = 0; i < filosofs.length; i++) {
-            taula.append("Comensal:" + filosofs[i].getName() + " esq:" + filosofs[i].getForquillaEsquerra().getNumeroF() + " dret:"
-                    + filosofs[i].getForquillaDreta().getNumeroF() + "\n");
+            taula.append("Comensal:" + filosofs[i].getName() + " esq:" + filosofs[i].gettenedorIzquierdo().getNumeroF() + " dret:"
+                    + filosofs[i].getTenedorDerecho().getNumeroF() + "\n");
         }
         return taula.toString();
     }
