@@ -22,11 +22,9 @@ public class Forquilla {
     public ReentrantLock getBloqueig() {
         return bloqueig;
     } 
-    public boolean tryAgafar() {
-        return bloqueig.tryLock();
-    }
-    public void agafar (){
-        bloqueig.lock();
+    public boolean agafar (){
+        boolean agafada = bloqueig.tryLock();
+        return agafada;
     }
 
     public void deixar (){
