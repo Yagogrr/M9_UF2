@@ -16,7 +16,7 @@ public class Barber extends Thread {
                         System.out.println("Ningú en espera");
                         System.out.println("Barber " + getName() + " dormint");
                         Barberia.barberia.getCondBarber().wait();
-                        continue; // tornar a intentar després del wait
+                        continue; 
                     } else {
                         System.out.println("Li toca al " + client.getNom());
                     }
